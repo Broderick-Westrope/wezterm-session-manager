@@ -1,13 +1,6 @@
 local wezterm = require("wezterm")
+local notification = require("wezterm-session-manager.notification")
 local session_manager = {}
-
---- Displays a notification in WezTerm.
--- @param message string: The notification message to be displayed.
-local function display_notification(window, message)
-	wezterm.log_info(message)
-	window:toast_notification("WezTerm Session Manager", message, nil, 5000)
-	-- Additional code to display a GUI notification can be added here if needed
-end
 
 --- Retrieves the current workspace data from the active window.
 -- @return table or nil: The workspace data table or nil if no active window is found.
@@ -194,14 +187,14 @@ function session_manager.restore_state(window)
 
 	local workspace_data = load_from_json_file(file_path)
 	if not workspace_data then
-		display_notification(window, "Workspace state file not found for workspace: " .. workspace_name)
+		notification.display(window, "Workspace state file not found for workspace: " .. workspace_name)
 		return
 	end
 
 	if recreate_workspace(window, workspace_data) then
-		display_notification(window, "Workspace state loaded for workspace: " .. workspace_name)
+		notification.display(window, "Workspace state loaded for workspace: " .. workspace_name)
 	else
-		display_notification(window, "Workspace state loading failed for workspace: " .. workspace_name)
+		notification.display(window, "Workspace state loading failed for workspace: " .. workspace_name)
 	end
 end
 
@@ -230,9 +223,9 @@ function session_manager.save_state(window)
 
 	-- Save the workspace data to a JSON file and display the appropriate notification
 	if save_to_json_file(data, file_path) then
-		display_notification(window, "Workspace state saved successfully.")
+		notification.display(window, "Workspace state saved successfully.")
 	else
-		display_notification(window, "Failed to save workspace state.")
+		notification.display(window, "Failed to save workspace state.")
 	end
 end
 
